@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Natural Disaster Model Test Page</title>
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        textarea{
+            font-family:Arial, sans-serif;
+            font-size:14px;
+            width:600px;
+            height:200px;
+            padding: 10px 5px 10px 5px;
+        }
+
+    </style>
+</head>
+<body>
+    <table>
+        <tr>
+            <td style="padding-right:5px;"></td>
+            <td>
+                <h1>Natural Disaster Predictor Test Page </h1>
+
+
+                <p>
+                    This webpage will do the following:
+                    <ul>
+                        <li>Take the text entered in the field below </li>
+                        <li>Send it to our flask application to test against our predictive model </li>
+                        <li>Return a positive or negative indicator based on the model evaluation</li>
+                    </ul>
+                </p>
+
+                <textarea id="txtInputText" maxlength="256" name="txtInputText"></textarea>
+                <br />
+                <br />
+                <input type="button" id="cmdSubmit" onclick="submitText();" value="Submit Text" />
+                <input type="button" id="cmdClear" onclick="clearText();" value="Clear Text" />
+            </td>
+        </tr>
+    </table>
+
+    <script type="text/javascript" src="jquery-3.4.1.js"></script>
+    <script type="text/javascript">
+
+        function submitText() {
+            $("html,body").css("cursor", "progress");
+            var inputText = $('#txtInputText').val();
+            var datastring = { testtext: inputText };
+            //make an ajax call to return the value from the flask application
+            $.ajax({
+                url: "http://127.0.0.1:5000/sentanalysis",
+                method: "GET",
+                data: datastring
+            })
+                .done(function (result) {
+                    if (result == '1') {
+                        alert('Congrats!  The tweet you entered is most likely related to a disaster');
+                    } else if (result == '0') {
+                        alert('Sorry - This tweet is not related to a disaster');
+                    }
+                    else {
+                        alert('Sorry - our model is not robust enough to evaluate the text you entered.');
+                    }
+                    $("html,body").css("cursor", "default");
+                });
+        }
+
+        function clearText() {
+            $('#txtInputText').val('');
+        }
+
+    </script>
+
+</body>
+</html>
